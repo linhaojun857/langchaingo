@@ -62,9 +62,15 @@ func (l CombiningHandler) HandleToolEnd(ctx context.Context, output string) {
 	}
 }
 
-func (l CombiningHandler) HandleAgentAction(ctx context.Context, action schema.AgentAction) {
+func (l CombiningHandler) HandleAgentActionStart(ctx context.Context, action schema.AgentAction) {
 	for _, handle := range l.Callbacks {
-		handle.HandleAgentAction(ctx, action)
+		handle.HandleAgentActionStart(ctx, action)
+	}
+}
+
+func (l CombiningHandler) HandleAgentActionEnd(ctx context.Context, action schema.AgentStep) {
+	for _, handle := range l.Callbacks {
+		handle.HandleAgentActionEnd(ctx, action)
 	}
 }
 

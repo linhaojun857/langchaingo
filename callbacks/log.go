@@ -91,8 +91,12 @@ func (l LogHandler) HandleToolError(_ context.Context, err error) {
 	fmt.Println("Exiting tool with error:", err)
 }
 
-func (l LogHandler) HandleAgentAction(_ context.Context, action schema.AgentAction) {
+func (l LogHandler) HandleAgentActionStart(_ context.Context, action schema.AgentAction) {
 	fmt.Println("Agent selected action:", formatAgentAction(action))
+}
+
+func (l LogHandler) HandleAgentActionEnd(ctx context.Context, action schema.AgentStep) {
+
 }
 
 func (l LogHandler) HandleAgentFinish(_ context.Context, finish schema.AgentFinish) {

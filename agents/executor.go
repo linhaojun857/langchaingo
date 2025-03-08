@@ -123,7 +123,7 @@ func (e *Executor) doAction(
 	action schema.AgentAction,
 ) ([]schema.AgentStep, error) {
 	if e.CallbacksHandler != nil {
-		e.CallbacksHandler.HandleAgentAction(ctx, action)
+		e.CallbacksHandler.HandleAgentActionStart(ctx, action)
 	}
 
 	tool, ok := nameToTool[strings.ToUpper(action.Tool)]
@@ -139,10 +139,16 @@ func (e *Executor) doAction(
 		return nil, err
 	}
 
-	return append(steps, schema.AgentStep{
+	step := schema.AgentStep{
 		Action:      action,
 		Observation: observation,
-	}), nil
+	}
+
+	if e.CallbacksHandler != nil {
+		e.CallbacksHandler.HandleAgentActionEnd(ctx, step)
+	}
+
+	return append(steps, step), nil
 }
 
 func (e *Executor) getReturn(finish *schema.AgentFinish, steps []schema.AgentStep) map[string]any {

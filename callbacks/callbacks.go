@@ -24,7 +24,7 @@ type Handler interface {
 	HandleToolEnd(ctx context.Context, output string)
 	HandleToolError(ctx context.Context, err error)
 	HandleAgentActionStart(ctx context.Context, action schema.AgentAction)
-	HandleAgentActionEnd(ctx context.Context, action schema.AgentStep)
+	HandleAgentActionEnd(ctx context.Context, step schema.AgentStep)
 	HandleAgentFinish(ctx context.Context, finish schema.AgentFinish)
 	HandleRetrieverStart(ctx context.Context, query string)
 	HandleRetrieverEnd(ctx context.Context, query string, documents []schema.Document)

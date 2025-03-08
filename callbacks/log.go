@@ -95,7 +95,7 @@ func (l LogHandler) HandleAgentActionStart(_ context.Context, action schema.Agen
 	fmt.Println("Agent selected action:", formatAgentAction(action))
 }
 
-func (l LogHandler) HandleAgentActionEnd(ctx context.Context, action schema.AgentStep) {
+func (l LogHandler) HandleAgentActionEnd(ctx context.Context, step schema.AgentStep) {
 
 }
 

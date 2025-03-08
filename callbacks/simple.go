@@ -24,7 +24,7 @@ func (SimpleHandler) HandleToolStart(context.Context, string)                   
 func (SimpleHandler) HandleToolEnd(context.Context, string)                                {}
 func (SimpleHandler) HandleToolError(context.Context, error)                               {}
 func (SimpleHandler) HandleAgentActionStart(context.Context, schema.AgentAction)           {}
-func (SimpleHandler) HandleAgentActionEnd(ctx context.Context, action schema.AgentStep)    {}
+func (SimpleHandler) HandleAgentActionEnd(context.Context, schema.AgentStep)               {}
 func (SimpleHandler) HandleAgentFinish(context.Context, schema.AgentFinish)                {}
 func (SimpleHandler) HandleRetrieverStart(context.Context, string)                         {}
 func (SimpleHandler) HandleRetrieverEnd(context.Context, string, []schema.Document)        {}

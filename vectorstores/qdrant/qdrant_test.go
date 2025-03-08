@@ -10,15 +10,15 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/linhaojun857/langchaingo/chains"
+	"github.com/linhaojun857/langchaingo/embeddings"
+	"github.com/linhaojun857/langchaingo/llms/openai"
+	"github.com/linhaojun857/langchaingo/schema"
+	"github.com/linhaojun857/langchaingo/vectorstores"
+	"github.com/linhaojun857/langchaingo/vectorstores/qdrant"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	tcqdrant "github.com/testcontainers/testcontainers-go/modules/qdrant"
-	"github.com/tmc/langchaingo/chains"
-	"github.com/tmc/langchaingo/embeddings"
-	"github.com/tmc/langchaingo/llms/openai"
-	"github.com/tmc/langchaingo/schema"
-	"github.com/tmc/langchaingo/vectorstores"
-	"github.com/tmc/langchaingo/vectorstores/qdrant"
 )
 
 func TestQdrantStore(t *testing.T) {

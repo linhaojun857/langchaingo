@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/tmc/langchaingo/llms"
-	"github.com/tmc/langchaingo/llms/openai"
 	"log"
+
+	"github.com/linhaojun857/langchaingo/llms"
+	"github.com/linhaojun857/langchaingo/llms/openai"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 		llms.TextParts(llms.ChatMessageTypeHuman, "which image is this?"),
 		{
 			Role:  llms.ChatMessageTypeHuman,
-			Parts: []llms.ContentPart{llms.ImageURLPart("https://github.com/tmc/langchaingo/blob/main/docs/static/img/parrot-icon.png?raw=true")},
+			Parts: []llms.ContentPart{llms.ImageURLPart("https://github.com/linhaojun857/langchaingo/blob/main/docs/static/img/parrot-icon.png?raw=true")},
 		},
 	}
 

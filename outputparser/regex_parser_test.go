@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tmc/langchaingo/outputparser"
+	"github.com/linhaojun857/langchaingo/outputparser"
 )
 
 func TestRegexParser(t *testing.T) {

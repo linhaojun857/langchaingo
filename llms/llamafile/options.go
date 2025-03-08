@@ -1,6 +1,6 @@
 package llamafile
 
-import "github.com/tmc/langchaingo/llms/llamafile/internal/llamafileclient"
+import "github.com/linhaojun857/langchaingo/llms/llamafile/internal/llamafileclient"
 
 type Option func(*llamafileclient.GenerationSettings)
 

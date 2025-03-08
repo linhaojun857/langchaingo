@@ -5,10 +5,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/linhaojun857/langchaingo/llms/openai"
+	"github.com/linhaojun857/langchaingo/tools/sqldatabase"
+	"github.com/linhaojun857/langchaingo/tools/sqldatabase/mysql"
 	"github.com/stretchr/testify/require"
-	"github.com/tmc/langchaingo/llms/openai"
-	"github.com/tmc/langchaingo/tools/sqldatabase"
-	"github.com/tmc/langchaingo/tools/sqldatabase/mysql"
 )
 
 func TestSQLDatabaseChain_Call(t *testing.T) {

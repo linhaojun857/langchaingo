@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/linhaojun857/langchaingo/callbacks"
+	"github.com/linhaojun857/langchaingo/chains"
 	"github.com/linhaojun857/langchaingo/llms"
 	"github.com/linhaojun857/langchaingo/prompts"
 	"github.com/linhaojun857/langchaingo/schema"
@@ -71,6 +72,7 @@ func (o *OpenAIFunctionsAgent) Plan(
 	ctx context.Context,
 	intermediateSteps []schema.AgentStep,
 	inputs map[string]string,
+	_ ...chains.ChainCallOption,
 ) ([]schema.AgentAction, *schema.AgentFinish, error) {
 	fullInputs := make(map[string]any, len(inputs))
 	for key, value := range inputs {

@@ -3,7 +3,6 @@ package agents
 import (
 	"context"
 	_ "embed"
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -13,10 +12,6 @@ import (
 	"github.com/linhaojun857/langchaingo/prompts"
 	"github.com/linhaojun857/langchaingo/schema"
 	"github.com/linhaojun857/langchaingo/tools"
-)
-
-const (
-	_conversationalFinalAnswerAction = "AI:"
 )
 
 // ConversationalAgent is a struct that represents an agent responsible for deciding
@@ -63,6 +58,7 @@ func (a *ConversationalAgent) Plan(
 	ctx context.Context,
 	intermediateSteps []schema.AgentStep,
 	inputs map[string]string,
+	opts ...chains.ChainCallOption,
 ) ([]schema.AgentAction, *schema.AgentFinish, error) {
 	fullInputs := make(map[string]any, len(inputs))
 	for key, value := range inputs {
@@ -71,21 +67,11 @@ func (a *ConversationalAgent) Plan(
 
 	fullInputs["agent_scratchpad"] = constructScratchPad(intermediateSteps)
 
-	var stream func(ctx context.Context, chunk []byte) error
-
-	if a.CallbacksHandler != nil {
-		stream = func(ctx context.Context, chunk []byte) error {
-			a.CallbacksHandler.HandleStreamingFunc(ctx, chunk)
-			return nil
-		}
-	}
-
 	output, err := chains.Predict(
 		ctx,
 		a.Chain,
 		fullInputs,
-		chains.WithStopWords([]string{"\nObservation:", "\n\tObservation:"}),
-		chains.WithStreamingFunc(stream),
+		opts...,
 	)
 	if err != nil {
 		return nil, nil, err
@@ -131,28 +117,33 @@ func constructScratchPad(steps []schema.AgentStep) string {
 }
 
 func (a *ConversationalAgent) parseOutput(output string) ([]schema.AgentAction, *schema.AgentFinish, error) {
-	if strings.Contains(output, _conversationalFinalAnswerAction) {
-		splits := strings.Split(output, _conversationalFinalAnswerAction)
-
+	r := regexp.MustCompile(`(?si)` + _finalAnswerAction + `(.*)`)
+	matches := r.FindStringSubmatch(output)
+	if len(matches) != 0 {
 		finishAction := &schema.AgentFinish{
 			ReturnValues: map[string]any{
-				a.OutputKey: splits[len(splits)-1],
+				a.OutputKey: strings.TrimLeft(matches[1], " "),
 			},
 			Log: output,
 		}
-
 		return nil, finishAction, nil
 	}
 
-	r := regexp.MustCompile(`Action: (.*?)[\n]*Action Input: (.*)`)
-	matches := r.FindStringSubmatch(output)
-	if len(matches) == 0 {
-		return nil, nil, fmt.Errorf("%w: %s", ErrUnableToParseOutput, output)
+	r = regexp.MustCompile(`(?i)Action:(.*?)\n*Action Input:([\s\S]*)$`)
+	matches = r.FindStringSubmatch(output)
+	if len(matches) != 0 {
+		return []schema.AgentAction{
+			{Tool: strings.TrimSpace(matches[1]), ToolInput: strings.TrimSpace(matches[2]), Log: output},
+		}, nil, nil
 	}
 
-	return []schema.AgentAction{
-		{Tool: strings.TrimSpace(matches[1]), ToolInput: strings.TrimSpace(matches[2]), Log: output},
-	}, nil, nil
+	finishAction := &schema.AgentFinish{
+		ReturnValues: map[string]any{
+			a.OutputKey: output,
+		},
+		Log: output,
+	}
+	return nil, finishAction, nil
 }
 
 //go:embed prompts/conversational_prefix.txt

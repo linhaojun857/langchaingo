@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	_finalAnswerAction = "Final Answer:"
-	_defaultOutputKey  = "output"
+	_defaultOutputKey = "output"
 )
 
 // OneShotZeroAgent is a struct that represents an agent responsible for deciding
@@ -64,6 +63,7 @@ func (a *OneShotZeroAgent) Plan(
 	ctx context.Context,
 	intermediateSteps []schema.AgentStep,
 	inputs map[string]string,
+	opts ...chains.ChainCallOption,
 ) ([]schema.AgentAction, *schema.AgentFinish, error) {
 	fullInputs := make(map[string]any, len(inputs))
 	for key, value := range inputs {
@@ -73,21 +73,11 @@ func (a *OneShotZeroAgent) Plan(
 	fullInputs["agent_scratchpad"] = constructMrklScratchPad(intermediateSteps)
 	fullInputs["today"] = time.Now().Format("January 02, 2006")
 
-	var stream func(ctx context.Context, chunk []byte) error
-
-	if a.CallbacksHandler != nil {
-		stream = func(ctx context.Context, chunk []byte) error {
-			a.CallbacksHandler.HandleStreamingFunc(ctx, chunk)
-			return nil
-		}
-	}
-
 	output, err := chains.Predict(
 		ctx,
 		a.Chain,
 		fullInputs,
-		chains.WithStopWords([]string{"\nObservation:", "\n\tObservation:"}),
-		chains.WithStreamingFunc(stream),
+		opts...,
 	)
 	if err != nil {
 		return nil, nil, err
@@ -143,7 +133,7 @@ func (a *OneShotZeroAgent) parseOutput(output string) ([]schema.AgentAction, *sc
 		}, nil
 	}
 
-	r := regexp.MustCompile(`Action:\s*(.+)\s*Action Input:\s(?s)*(.+)`)
+	r := regexp.MustCompile(`(?i)Action:(.*?)\n*Action Input:([\s\S]*)$`)
 	matches := r.FindStringSubmatch(output)
 	if len(matches) == 0 {
 		return nil, nil, fmt.Errorf("%w: %s", ErrUnableToParseOutput, output)
